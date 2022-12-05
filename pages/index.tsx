@@ -2,6 +2,7 @@ import React, { useCallback, useLayoutEffect } from "react";
 import DataTable from "react-data-table-component";
 import { Button } from "../components/Button";
 import { MainSeo } from "../components/Seo";
+import parse from "html-react-parser";
 
 import { DecisionTree, treeToHtml } from "../utils/tree";
 import Papa from "papaparse";
@@ -135,6 +136,13 @@ export default function Home() {
     }
   };
 
+  const renderTree = () => {
+    if (model) {
+      //@ts-ignore
+      return parse(treeToHtml(model?.root));
+    }
+  };
+
   return (
     <main className="flex h-full max-w-screen-xl min-h-screen px-4 mx-auto sm:px-6 lg:px-8 ">
       <MainSeo />
@@ -201,14 +209,15 @@ export default function Home() {
           {showTable && previewTable(csvData)}
           {resultModel && previewTable(resultModel, true)}
         </div>
-        {resultModel && (
-          <>
+        <div className="mb-40">
+          <div class="tree">
             {
               //@ts-ignore
-              treeToHtml(model?.root)
+              // insert in document
+              model && renderTree()
             }
-          </>
-        )}
+          </div>
+        </div>
       </div>
     </main>
   );
