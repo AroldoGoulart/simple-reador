@@ -201,7 +201,14 @@ export default function Home() {
           {showTable && previewTable(csvData)}
           {resultModel && previewTable(resultModel, true)}
         </div>
-        {resultModel && <>{treeToHtml(model?.root)}</>}
+        {resultModel && (
+          <>
+            {
+              //@ts-ignore
+              treeToHtml(model?.root)
+            }
+          </>
+        )}
       </div>
     </main>
   );
