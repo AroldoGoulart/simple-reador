@@ -1,19 +1,22 @@
 import React, { useLayoutEffect } from "react";
 import CSVReader from "react-csv-reader";
+import { Button } from "../components/Button";
 import { MainSeo } from "../components/Seo";
+import { APIClient } from "../services/api";
 import { json } from "../utils/types";
+import { sendCSV } from "./api/csv";
 
 export default function Home() {
   const [file, setFile] = React.useState([]);
+  const [csv, setCsv] = React.useState<string>(``);
 
-  useLayoutEffect(() => {
-    const isDevMode = process.env.NODE_ENV === "development";
-    if (!isDevMode) {
-      console.warn = () => {};
-      console.log = () => {};
-      console.error = () => {};
+  const sendFile = async () => {
+    if (csv) {
+      console.log(`enviar?`);
+      const response = await sendCSV(csv);
+      console.log(response);
     }
-  }, []);
+  };
 
   const readUploadFile = (file: React.ChangeEvent<HTMLInputElement>) => {
     const fileReader = new FileReader();
@@ -23,6 +26,7 @@ export default function Home() {
         const csvData = e?.target?.result;
         const dataString = csvData?.toString();
         // chamada api
+        setCsv(dataString || ``);
       };
     }
   };
@@ -56,6 +60,11 @@ export default function Home() {
               />
             </form>
           </div>
+          <Button
+            disabled={csv.length <= 0}
+            onClick={() => sendFile()}
+            title="Enviar"
+          />
         </div>
       </div>
     </main>

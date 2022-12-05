@@ -19,24 +19,31 @@ function runMiddleware(req, res, fn) {
   });
 }
 
-export async function getBookRandom(csvString: string) {
-  const random_book = await APIClient.get(`csv`, {
+export async function sendCSV(csvString: string) {
+  console.log(`handle?`)
+  const response = await APIClient.get(`/csv`, {
     params: {
       csv: csvString,
     }
   });
-  
-  return random_book.data.book
+
+  return response.data.book
 }
 
 // @ts-ignore
 export default async function handler(req, res) {
   await runMiddleware(req, res, cors);
 
-  const response = await API.get(`csv`);
+  // get params
+  const { csv } = req.query;
+  console.log(`csv: ${csv}`)
+
+  const response = await API.post(`createTree`, {
+    data: csv
+  });
 
   return res.json({
-    tree: response.data?.tree,
+    tree: `response.data?.tree,`
   });
 }
 
