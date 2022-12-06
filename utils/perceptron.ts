@@ -76,6 +76,7 @@ class MultiLayerPerceptron {
     }
 
     let sum = input;
+    //@ts-ignore
     let activations = [];
     activations.push(input);
     for (let i = 0; i < this.weightArray.length; i++) {
@@ -91,6 +92,7 @@ class MultiLayerPerceptron {
     // console.log(activations);
     activations.forEach((activation: any, key1) => {
       console.log();
+    //@ts-ignore
       activation.map((ele, key2) => {
         if(!ele) {
           // @ts-ignore
