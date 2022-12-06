@@ -6,6 +6,7 @@ import parse from "html-react-parser";
 
 import { DecisionTree, treeToHtml } from "../utils/tree";
 import Papa from "papaparse";
+import { Header } from "../components/Header";
 
 export default function Home() {
   const [file, setFile] = React.useState([]);
@@ -144,84 +145,88 @@ export default function Home() {
   };
 
   return (
-    <main className="flex h-full max-w-screen-xl min-h-screen px-4 mx-auto sm:px-6 lg:px-8 ">
-      <MainSeo />
-      <div className="flex flex-col flex-1  justify-center align-middle items-center  bg-card rounded">
-        <div className="my-10">
-          <div className="flex flex-col items-center justify-center  ">
-            <h1 className="mx-2 text-3xl text-center select-none text-blue-700">
-              Lançamento de previsão
-            </h1>
-          </div>
+    <>
+      <Header />
 
-          <div className="flex  gap-4 my-6 flex-col justify-center align-middle items-center">
-            <form className="flex flex-col items-center justify-center text-center">
-              <label className="text-sm  mb-2 text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                Arquivo de treino
-              </label>
-              <input
-                type="file"
-                name="upload"
-                id="upload"
-                onChange={(e) => readUploadFile(e, setCsvData)}
-                accept={`.csv`}
-                className="items-center self-center justify-center block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 "
-              />
-            </form>
+      <main className="flex h-full max-w-screen-xl min-h-screen px-4 mx-auto sm:px-6 lg:px-8 mb-8 mt-8">
+        <MainSeo />
+        <div className="flex flex-col flex-1  justify-center align-middle items-center  bg-card rounded">
+          <div className="my-10">
+            <div className="flex flex-col items-center justify-center  ">
+              <h1 className="mx-2 text-3xl text-center select-none text-blue-700">
+                Lançamento de previsão
+              </h1>
+            </div>
 
-            <form className="flex flex-col items-center justify-center text-center">
-              <label className="text-sm  mb-2 text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                Arquivo de previsão
-              </label>
-              <input
-                type="file"
-                name="upload"
-                id="upload"
-                onChange={(e) => readUploadFile(e, setCsvDataToPredict)}
-                accept={`.csv`}
-                className="items-center self-center justify-center block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 "
-              />
-            </form>
-          </div>
-          <Button
-            disabled={!csvData}
-            onClick={() => enableTable()}
-            title="Preview da tabela"
-          />
-          <div className="mt-2">
+            <div className="flex  gap-4 my-6 flex-col justify-center align-middle items-center">
+              <form className="flex flex-col items-center justify-center text-center">
+                <label className="text-sm  mb-2 text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                  Arquivo de treino
+                </label>
+                <input
+                  type="file"
+                  name="upload"
+                  id="upload"
+                  onChange={(e) => readUploadFile(e, setCsvData)}
+                  accept={`.csv`}
+                  className="items-center self-center justify-center block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 "
+                />
+              </form>
+
+              <form className="flex flex-col items-center justify-center text-center">
+                <label className="text-sm  mb-2 text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                  Arquivo de previsão
+                </label>
+                <input
+                  type="file"
+                  name="upload"
+                  id="upload"
+                  onChange={(e) => readUploadFile(e, setCsvDataToPredict)}
+                  accept={`.csv`}
+                  className="items-center self-center justify-center block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 "
+                />
+              </form>
+            </div>
             <Button
               disabled={!csvData}
-              onClick={() => trainIATree()}
-              title="Treinar"
-              variant="secondary"
+              onClick={() => enableTable()}
+              title="Preview da tabela"
             />
+            <div className="mt-2">
+              <Button
+                disabled={!csvData}
+                onClick={() => trainIATree()}
+                title="Treinar"
+                variant="secondary"
+              />
+            </div>
+            <div className="mt-2">
+              <Button
+                disabled={!model || !csvDataToPredict || !csvData}
+                onClick={() => previewData()}
+                title="Prever!"
+                variant="tertiary"
+              />
+            </div>
           </div>
-          <div className="mt-2">
-            <Button
-              disabled={!model || !csvDataToPredict || !csvData}
-              onClick={() => previewData()}
-              title="Prever!"
-              variant="tertiary"
-            />
+          <div className="flex flow-row mb-10">
+            {showTable && previewTable(csvData)}
+            {resultModel && previewTable(resultModel, true)}
+          </div>
+          <div className="mb-40">
+            <div
+              // @ts-ignore
+              class="tree"
+            >
+              {
+                //@ts-ignore
+                // insert in document
+                model && renderTree()
+              }
+            </div>
           </div>
         </div>
-        <div className="flex flow-row mb-10">
-          {showTable && previewTable(csvData)}
-          {resultModel && previewTable(resultModel, true)}
-        </div>
-        <div className="mb-40">
-          <div
-            // @ts-ignore
-            class="tree"
-          >
-            {
-              //@ts-ignore
-              // insert in document
-              model && renderTree()
-            }
-          </div>
-        </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }
