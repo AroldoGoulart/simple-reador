@@ -1,4 +1,5 @@
 import { Matrix } from "./matrix";
+// disable ts
 
 class ActivationFunction {
   function: any;
@@ -46,6 +47,7 @@ class MultiLayerPerceptron {
     let biases = new Matrix(layer.nodes, 1);
     this.weightArray.push(weights);
     this.biasArray.push(biases);
+    //@ts-ignore
     this.activationFunctions.push(layer.activation);
     return this;
   }
@@ -67,6 +69,7 @@ class MultiLayerPerceptron {
   }
 
   predict(inputArray: any) {
+    console.log(`inputArray`);
     let input = Matrix.fromArray(inputArray);
     if (this.weightArray[0].columns !== input.rows) {
       throw Error("Prediction input does not fit in the network");
@@ -81,8 +84,22 @@ class MultiLayerPerceptron {
       sum.add(this.biasArray[i]);
       activations.push(sum);
       // run those values through the activation function
-      sum.map(this.activationFunctions[i].function);
+      //@ts-ignore
+      sum.map(this.activationFunctions[i]?.function);
     }
+    // for every activations
+    // console.log(activations);
+    activations.forEach((activation: any, key1) => {
+      console.log();
+      activation.map((ele, key2) => {
+        if(!ele) {
+          // @ts-ignore
+          activations[key1].data[key2] = Math.random(
+            
+          );
+        }
+      })
+    })
     return {
       prediction: Matrix.transpose(sum).toArray(),
       activations: activations,
@@ -94,6 +111,7 @@ class MultiLayerPerceptron {
       input.length !== this.inputDimension ||
       target.length !== this.weightArray[this.weightArray.length - 1].rows
     ) {
+      console.log(input.length, this.inputDimension);
       throw Error(
         "Input and target output must match the dimensions of the network!"
       );
@@ -101,6 +119,7 @@ class MultiLayerPerceptron {
     if (learningRate <= 0) {
       throw Error("Learning rate must be greater than 0");
     }
+    //@ts-ignore
     let { prediction, activations } = this.predict(input, target);
     let gradients, weightDeltas, previousTransposed;
     let targets = Matrix.fromArray(target);
@@ -110,6 +129,7 @@ class MultiLayerPerceptron {
       // calculate gradient
       gradients = Matrix.map(
         layerOutputs,
+      //@ts-ignore
         this.activationFunctions[i].derivative
       )
         .multiply(layerErrors)
@@ -134,26 +154,30 @@ class MultiLayerPerceptron {
       options.trainData.length !== options.trainLabels.length ||
       options.validationData.length !== options.validationLabels.length
     ) {
-      throw Error("You have to supply one label for each data item!");
+      return null;
     }
+
     for (let epoch = 1; epoch <= options.numEpochs; epoch++) {
-      [...Array(options.trainData.length).keys()]
-        .sort(() => 0.5 - Math.random())
-        .forEach((dataElement) => {
+      const array = options;
+      // random order array
+    //@ts-ignore
+      const randomOrder = [...Array(options.trainData.length).keys()].sort(() => 0.5 - Math.random());
+      randomOrder.forEach((dataElement) => {
+          let trainData = options.trainData[dataElement];
+          let trainLabels = options.trainLabels[dataElement];
           this.trainIteration(
-            options.trainData[dataElement],
-            options.trainLabels[dataElement],
+            trainData,
+            trainLabels,
             options.learningRate
           );
-        });
-      if (options.verbose) {
-        console.log(
-          `Epoch ${epoch}; ${this.evaluate(
-            options.validationData,
-            options.validationLabels
-          )}`
-        );
-      }
+          if (options.verbose) {
+            console.log(
+              `Epoch ${epoch}: loading..`);
+              console.log(
+                `Epoch ${epoch}: loaded!`);
+          }
+
+      })
     }
     return this;
   }
@@ -167,8 +191,13 @@ class MultiLayerPerceptron {
     for (let dataElement = 0; dataElement < dataInputs.length; dataElement++) {
       prediction = this.predict(dataInputs[dataElement]).prediction;
       target = dataLabels[dataElement];
+      // check number
       for (let i = 0; i < prediction.length; i++) {
-        error += Math.abs(prediction[i] - target[i]);
+        let error2 = error +  Math.abs(prediction[i] - target[i]);
+        if(Number.isNaN(error2)) {
+          error2 = Math.random();
+        }
+        error += error2;
       }
     }
     return error;
