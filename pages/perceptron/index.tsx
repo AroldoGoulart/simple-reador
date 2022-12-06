@@ -17,9 +17,8 @@ import Papa from "papaparse";
 import { MainSeo } from "../../components/Seo";
 import DataTable from "react-data-table-component";
 
-let layers = new MultiLayerPerceptron({ inputDimension: 3 })
+let layers = new MultiLayerPerceptron({ inputDimension: 4 })
   .addLayer({ nodes: 2, activation: sigmoid })
-  .addLayer({ nodes: 1, activation: sigmoid })
   .randomizeWeights();
 
 function Perceptron() {
