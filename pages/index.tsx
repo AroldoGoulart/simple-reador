@@ -210,7 +210,10 @@ export default function Home() {
           {resultModel && previewTable(resultModel, true)}
         </div>
         <div className="mb-40">
-          <div class="tree">
+          <div
+            // @ts-ignore
+            class="tree"
+          >
             {
               //@ts-ignore
               // insert in document
